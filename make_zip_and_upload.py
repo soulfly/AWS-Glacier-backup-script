@@ -17,11 +17,16 @@ if __name__ == '__main__':
 
     archive_name = 'backup_%s.zip' % datetime.isoformat()
 
+    # prepare archive
     zipf = zipfile.ZipFile(archive_name, 'w')
-    zip_dir('test_dir', zipf)
+    zip_dir('test_dir1', zipf) # replace with real dirs/files
     zipf.close()
 
+    # upload
     glacier = GlacierService("backups", "ap-southeast-2")
     glacier.upload_archive(archive_name)
+
+    # cleanup
+    os.remove(archive_name)
 
 
