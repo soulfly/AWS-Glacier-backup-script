@@ -3,60 +3,57 @@ __author__ = 'igorkhomenko'
 from boto.glacier.layer1 import Layer1
 from boto.glacier.concurrent import ConcurrentUploader
 
-target_vault_name = 'backups'
-region_name = "ap-southeast-2"
 
-def upload_archive(file_name):
-    glacier_layer1 = Layer1(region_name=region_name)
+class GlacierService:
 
-    uploader = ConcurrentUploader(glacier_layer1, target_vault_name, 32*1024*1024)
+    def __init__(self, target_vault_name, region_name):
+        self.target_vault_name = target_vault_name
+        self.region_name = region_name
 
-    print("operation starting...")
+    def upload_archive(self, file_name):
+        glacier_layer1 = Layer1(region_name=self.region_name)
 
-    archive_id = uploader.upload(file_name, file_name)
+        uploader = ConcurrentUploader(glacier_layer1, self.target_vault_name, 32*1024*1024)
 
-    print("Success! archive id: '%s'" % archive_id)
+        print("operation starting...")
 
-def delete_archive(archive_id):
-    glacier_layer1 = Layer1(region_name=region_name)
+        archive_id = uploader.upload(self, file_name, file_name)
 
-    print("operation starting...")
+        print("Success! archive id: '%s'" % archive_id)
 
-    print glacier_layer1.delete_archive(target_vault_name, archive_id)
+    def delete_archive(self, archive_id):
+        glacier_layer1 = Layer1(region_name=self.region_name)
 
-def get_vault_metadata():
-    glacier_layer1 = Layer1(region_name=region_name)
+        print("operation starting...")
 
-    print("operation starting...")
+        print glacier_layer1.delete_archive(self.target_vault_name, archive_id)
 
-    vault_metadata = glacier_layer1.describe_vault(target_vault_name)
+    def get_vault_metadata(self):
+        glacier_layer1 = Layer1(region_name=self.region_name)
 
-    print("Success! vault metadata: %s" % vault_metadata)
+        print("operation starting...")
 
-def list_jobs(job_id=None):
-    glacier_layer1 = Layer1(region_name=region_name)
+        vault_metadata = glacier_layer1.describe_vault(self.target_vault_name)
 
-    print("operation starting...")
+        print("Success! vault metadata: %s" % vault_metadata)
 
-    if(job_id != None):
-        print glacier_layer1.get_job_output(target_vault_name, job_id)
-    else:
-        output =  glacier_layer1.list_jobs(target_vault_name, completed=False)
-        print output
+    def list_jobs(self, job_id=None):
+        glacier_layer1 = Layer1(region_name=self.region_name)
 
-def get_vault_inventory():
-    glacier_layer1 = Layer1(region_name=region_name)
+        print("operation starting...")
 
-    print("operation starting...")
+        if(job_id != None):
+            print glacier_layer1.get_job_output(self.target_vault_name, job_id)
+        else:
+            output =  glacier_layer1.list_jobs(self.target_vault_name, completed=False)
+            print output
 
-    job_id = glacier_layer1.initiate_job(target_vault_name, {"Description":"inventory-job",
-                                                             "Type":"inventory-retrieval", "Format":"JSON"})
+    def get_vault_inventory(self):
+        glacier_layer1 = Layer1(region_name=self.region_name)
 
-    print("Success! inventory job id: %s" % (job_id,))
+        print("operation starting...")
 
+        job_id = glacier_layer1.initiate_job(self.target_vault_name, {"Description":"inventory-job",
+                                                                 "Type":"inventory-retrieval", "Format":"JSON"})
 
-if __name__ == '__main__':
-    # upload_archive("Hadoop.zip")
-    # get_vault_inventory()
-    # get_vault_metadata()
-    list_jobs()
+        print("Success! inventory job id: %s" % (job_id,))
