@@ -43,10 +43,16 @@ class GlacierService:
         print("operation starting...")
 
         if(job_id != None):
-            print glacier_layer1.get_job_output(self.target_vault_name, job_id)
+            print glacier_layer1.describe_job(self.target_vault_name, job_id)
         else:
-            output =  glacier_layer1.list_jobs(self.target_vault_name, completed=False)
-            print output
+            print glacier_layer1.list_jobs(self.target_vault_name, completed=False)
+
+    def get_job_output(self, job_id=None):
+        glacier_layer1 = Layer1(region_name=self.region_name)
+
+        print("operation starting...")
+
+        print glacier_layer1.get_job_output(self.target_vault_name, job_id)
 
     def get_vault_inventory(self):
         glacier_layer1 = Layer1(region_name=self.region_name)
