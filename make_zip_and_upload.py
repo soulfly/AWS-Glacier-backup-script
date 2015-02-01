@@ -13,9 +13,11 @@ def zip_dir(dir_path, zf):
             zf.write(os.path.join(dirname, filename))
 
 if __name__ == '__main__':
-    datetime = datetime.datetime.now()
+    datetime = datetime.datetime.now().isoformat().replace(":", "_").replace("-", "_").replace(".", "_")
 
-    archive_name = 'backup_%s.zip' % datetime.isoformat()
+    archive_name = 'backup_%s.zip' % datetime
+
+    print archive_name
 
     # prepare archive
     zipf = zipfile.ZipFile(archive_name, 'w')
