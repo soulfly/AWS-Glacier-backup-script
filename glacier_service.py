@@ -17,7 +17,7 @@ class GlacierService:
 
         print("operation starting...")
 
-        archive_id = uploader.upload(self, file_name, file_name)
+        archive_id = uploader.upload(file_name, file_name)
 
         print("Success! archive id: '%s'" % archive_id)
 
