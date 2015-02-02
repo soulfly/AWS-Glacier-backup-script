@@ -28,6 +28,19 @@ class GlacierService:
 
         print glacier_layer1.delete_archive(self.target_vault_name, archive_id)
 
+    def initiate_archive_retrieval_job(self, archive_id):
+        glacier_layer1 = Layer1(region_name=self.region_name)
+
+        print("operation starting...")
+
+        job_id = glacier_layer1.initiate_job(self.target_vault_name, {"Description": "download-archive-job",
+                                                                      "Type": "archive-retrieval",
+                                                                      "ArchiveId": archive_id})
+
+        print("Success! job id: %s" % (job_id,))
+
+        return job_id
+
     def get_vault_metadata(self):
         glacier_layer1 = Layer1(region_name=self.region_name)
 
@@ -52,14 +65,20 @@ class GlacierService:
 
         print("operation starting...")
 
-        print glacier_layer1.get_job_output(self.target_vault_name, job_id)
+        output = glacier_layer1.get_job_output(self.target_vault_name, job_id)
+        print output
 
-    def get_vault_inventory(self):
+        return output
+
+    def initiate_vault_inventory_job(self):
         glacier_layer1 = Layer1(region_name=self.region_name)
 
         print("operation starting...")
 
-        job_id = glacier_layer1.initiate_job(self.target_vault_name, {"Description":"inventory-job",
-                                                                 "Type":"inventory-retrieval", "Format":"JSON"})
+        job_id = glacier_layer1.initiate_job(self.target_vault_name, {"Description": "inventory-job",
+                                                                      "Type": "inventory-retrieval",
+                                                                      "Format": "JSON"})
 
         print("Success! inventory job id: %s" % (job_id,))
+
+        return job_id
